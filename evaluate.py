@@ -94,38 +94,29 @@ def evaluate_mbpp(model, output_path):
         for filename in os.listdir(path + f"/{type}"):
             file_names.append(f"/{type}/{filename}")
     for file in file_names:
-        # 读取文件并将每一行转换为list
         def read_file(file_path):
             with open(file_path, 'r', encoding='utf-8') as file:
                 lines = file.readlines()
-                # 假设每行是一个list的字符串格式，使用eval将其转换为实际list
                 data = [eval(line.strip()) for line in lines]
             return data
 
-        # 计算两个列表之间的余弦相似度
         def cosine_similarity(list1, list2):
-            # scipy的cosine计算的是余弦距离，余弦相似度是 1 - 余弦距离
             return 1 - cosine(list1, list2)
 
-        # 计算两个文件对应行的余弦相似度的平均值
         def average_cosine_similarity(file1, file2):
             data1 = read_file(file1)
             data2 = read_file(file2)
-            # 确保两个文件的行数相同
-            assert len(data1) == len(data2), "两个文件的行数不同！"
+            assert len(data1) == len(data2), "!!"
             similarities = []
             for list1, list2 in zip(data1, data2):
                 sim = cosine_similarity(list1, list2)
                 similarities.append(sim)
-            # 计算余弦相似度的平均值
             avg_similarity = np.mean(similarities)
             return avg_similarity
 
-        # 示例：文件路径
         file1 = base_path
         file2 = f"{path}/{file}"
 
-        # 计算平均余弦相似度
         avg_cos_sim = average_cosine_similarity(file1, file2)
         print(f"{file2}: {avg_cos_sim}")
 
@@ -249,38 +240,28 @@ def evaluate_input(dataset):
     for filename in os.listdir(path):
         file_names.append(filename)
     for file in file_names:
-        # 读取文件并将每一行转换为list
         def read_file(file_path):
             with open(file_path, 'r', encoding='utf-8') as file:
                 lines = file.readlines()
-                # 假设每行是一个list的字符串格式，使用eval将其转换为实际list
                 data = [eval(line.strip()) for line in lines]
             return data
 
-        # 计算两个列表之间的余弦相似度
         def cosine_similarity(list1, list2):
-            # scipy的cosine计算的是余弦距离，余弦相似度是 1 - 余弦距离
             return 1 - cosine(list1, list2)
 
-        # 计算两个文件对应行的余弦相似度的平均值
         def average_cosine_similarity(file1, file2):
             data1 = read_file(file1)
             data2 = read_file(file2)
-            # 确保两个文件的行数相同
-            assert len(data1) == len(data2), "两个文件的行数不同！"
             similarities = []
             for list1, list2 in zip(data1, data2):
                 sim = cosine_similarity(list1, list2)
                 similarities.append(sim)
-            # 计算余弦相似度的平均值
             avg_similarity = np.mean(similarities)
             return avg_similarity
 
-        # 示例：文件路径
         file1 = base_path
         file2 = f"{path}/{file}"
 
-        # 计算平均余弦相似度
         avg_cos_sim = average_cosine_similarity(file1, file2)
         print(f"{file2}: {avg_cos_sim}")
 
@@ -292,38 +273,29 @@ def evaluate_output_summarize(model, dataset):
     for filename in os.listdir(f"{path}/char"):
         file_names.append(filename)
     for file in file_names:
-        # 读取文件并将每一行转换为list
         def read_file(file_path):
             with open(file_path, 'r', encoding='utf-8') as file:
                 lines = file.readlines()
-                # 假设每行是一个list的字符串格式，使用eval将其转换为实际list
                 data = [eval(line.strip()) for line in lines]
             return data
 
-        # 计算两个列表之间的余弦相似度
         def cosine_similarity(list1, list2):
-            # scipy的cosine计算的是余弦距离，余弦相似度是 1 - 余弦距离
             return 1 - cosine(list1, list2)
 
-        # 计算两个文件对应行的余弦相似度的平均值
         def average_cosine_similarity(file1, file2):
             data1 = read_file(file1)
             data2 = read_file(file2)
-            # 确保两个文件的行数相同
-            assert len(data1) == len(data2), "两个文件的行数不同！"
+            assert len(data1) == len(data2), "!"
             similarities = []
             for list1, list2 in zip(data1, data2):
                 sim = cosine_similarity(list1, list2)
                 similarities.append(sim)
-            # 计算余弦相似度的平均值
             avg_similarity = np.mean(similarities)
             return avg_similarity
 
-        # 示例：文件路径
         file1 = base_path
         file2 = f"{path}/char/{file}"
 
-        # 计算平均余弦相似度
         avg_cos_sim = average_cosine_similarity(file1, file2)
         print(f"{file2}: {avg_cos_sim}")
 
@@ -335,38 +307,29 @@ def evaluate_output_translate(model, dataset):
     for filename in os.listdir(f"{path}/char"):
         file_names.append(filename)
     for file in file_names:
-        # 读取文件并将每一行转换为list
         def read_file(file_path):
             with open(file_path, 'r', encoding='utf-8') as file:
                 lines = file.readlines()
-                # 假设每行是一个list的字符串格式，使用eval将其转换为实际list
                 data = [eval(line.strip()) for line in lines]
             return data
 
-        # 计算两个列表之间的余弦相似度
         def cosine_similarity(list1, list2):
-            # scipy的cosine计算的是余弦距离，余弦相似度是 1 - 余弦距离
             return 1 - cosine(list1, list2)
 
-        # 计算两个文件对应行的余弦相似度的平均值
         def average_cosine_similarity(file1, file2):
             data1 = read_file(file1)
             data2 = read_file(file2)
-            # 确保两个文件的行数相同
-            assert len(data1) == len(data2), "两个文件的行数不同！"
+            assert len(data1) == len(data2), "!"
             similarities = []
             for list1, list2 in zip(data1, data2):
                 sim = cosine_similarity(list1, list2)
                 similarities.append(sim)
-            # 计算余弦相似度的平均值
             avg_similarity = np.mean(similarities)
             return avg_similarity
 
-        # 示例：文件路径
         file1 = base_path
         file2 = f"{path}/char/{file}"
 
-        # 计算平均余弦相似度
         avg_cos_sim = average_cosine_similarity(file1, file2)
         print(f"{file2}: {avg_cos_sim}")
 
