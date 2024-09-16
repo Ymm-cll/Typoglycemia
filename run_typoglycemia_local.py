@@ -16,7 +16,6 @@ from torch.utils.data import DataLoader
 import logging
 import numpy as np
 
-# 假设你要禁止 `some_library` 的输出
 logging.getLogger("torch").setLevel(logging.ERROR)
 logging.getLogger("transformers").setLevel(logging.ERROR)
 
@@ -193,11 +192,9 @@ def chat(pipeline, tokenizer, prompt):
 def run(model_name, mode, ds_path, output_fields, output_path, check_prompt, save_emb=False):
     def tokenize_function(item):
         # return tokenizer(item["prompt"], padding="max_length", max_length=512, truncation=True, return_tensors="pt")
-        # 使用 tokenizer 对 prompt 进行处理，得到输出字典
         tokenized_output = tokenizer.apply_chat_template(item["prompt"], max_length=512, truncation=True,
                                                          add_generation_prompt=True, return_tensors="pt")
         print(tokenized_output)
-        # 将 Tensor 转换为字典，且确保字典的键名与数据集中列的键名一致
         return tokenized_output
 
     def batch_iterable(iterable, batch_size):
@@ -206,30 +203,21 @@ def run(model_name, mode, ds_path, output_fields, output_path, check_prompt, sav
 
     def parse(s):
         if "llama" in model_name:
-            # 找到最后一个 "assistant" 的起始位置
             index = s.rfind("assistant")
-            # 如果找到了 "assistant"
             if index != -1:
-                # 返回从 "assistant" 之后的子字符串
                 return s[index + len("assistant"):]
             else:
-                # 如果没有找到，返回空字符串或其他合适的值
                 return ""
         if "gemma" in model_name:
-            # 找到最后一个 "assistant" 的起始位置
             index = s.rfind("model")
-            # 如果找到了 "assistant"
             if index != -1:
-                # 返回从 "assistant" 之后的子字符串
                 return s[index + len("model"):]
             else:
-                # 如果没有找到，返回空字符串或其他合适的值
                 return ""
 
     dataset = ds_path.split("/")[-1].replace(".csv", "")
     mode_path = output_path.split("/")[-1].replace(".csv", "")
 
-    # 下载并加载模型和tokenizer
     if model_name == "llama-3.1-8b-instruct":
         model_id = snapshot_download("LLM-Research/Meta-Llama-3.1-8B-Instruct",
                                      local_dir="../models/llama-3.1-8b-instruct")
@@ -247,7 +235,6 @@ def run(model_name, mode, ds_path, output_fields, output_path, check_prompt, sav
     tokenizer.pad_token = tokenizer.eos_token
     model = transformers.AutoModelForCausalLM.from_pretrained(model_id)
 
-    # 将模型移动到GPU
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
@@ -264,7 +251,6 @@ def run(model_name, mode, ds_path, output_fields, output_path, check_prompt, sav
                 print(prompt)
             ds_dataset.append([{"role": "user", "content": str(prompt)}])
 
-    # 模型推理与获取隐藏层状态以及token数量
     model.eval()
     batched_ds = list(batch_iterable(ds_dataset, batch_size))
     num = 0
@@ -285,7 +271,6 @@ def run(model_name, mode, ds_path, output_fields, output_path, check_prompt, sav
         input_ids = torch.tensor(padded_lists)
 
         with torch.no_grad():
-            # 生成输出token IDs
             completion_start = time.time()
             output_ids = model.generate(input_ids.to("cuda"), max_new_tokens=512, output_hidden_states=True,
                                         return_dict_in_generate=True, temperature=1e-6, top_p=1,
