@@ -4,8 +4,6 @@ import time
 import tqdm
 import methods
 from openai import OpenAI
-from api.songshu import SongShu
-from api.qianduoduo import QianDuoDuo
 import argparse
 
 # Set random seed for reproducibility
@@ -13,15 +11,11 @@ random.seed(42)
 
 # API keys for various services
 openai_api_key = "your openai api key"
-songshu_api_key = "your songshu api key"
-qianduoduo_api_key = "your qianduoduo api key"
 llama_api_key = "your llama api key"
 
 # Initialize clients for different APIs
 clients = {
     "openai": OpenAI(api_key=openai_api_key),
-    "songshu": SongShu(api_key=songshu_api_key),
-    "qianduoduo": QianDuoDuo(api_key=qianduoduo_api_key),
     "llama": OpenAI(api_key=llama_api_key, base_url="https://api.llama-api.com"),
 }
 
@@ -172,15 +166,9 @@ def run(model_name, mode, ds_path, output_fields, output_path, check_prompt, sta
     if "llama" in model_name or "gemma" in model_name:
         client = clients["llama"]
         client_name = "llama"
-    if "qianduoduo" in model_name:
-        client = clients["qianduoduo"]
-        client_name = "qianduoduo"
     if "gpt" in model_name:
         client = clients["openai"]
         client_name = "openai"
-    if "songshu" in model_name:
-        client = clients["songshu"]
-        client_name = "songshu"
 
     # Load the dataset from the specified path
     with open(ds_path, "r", encoding="utf-8") as f:
@@ -195,20 +183,17 @@ def run(model_name, mode, ds_path, output_fields, output_path, check_prompt, sta
 
         # Measure the completion time for each prompt
         completion_start = time.time()
-        if client_name == "songshu":
-            temp = client.chat(messages=prompt.replace("{", "(").replace("}", ")"), model=model_name)
-        else:
-            chat_completion = client.chat.completions.create(
-                messages=[{"role": "user", "content": prompt}],
-                model=model_name,
-                temperature=0,
-                max_tokens=1024,
-                top_p=1,
-                n=1,
-                frequency_penalty=0,
-                presence_penalty=0,
-            )
-            temp = chat_completion.choices[0].message.content
+        chat_completion = client.chat.completions.create(
+            messages=[{"role": "user", "content": prompt}],
+            model=model_name,
+            temperature=0,
+            max_tokens=1024,
+            top_p=1,
+            n=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+        )
+        temp = chat_completion.choices[0].message.content
         completion_end = time.time()
 
         # Process the response and calculate token usage
