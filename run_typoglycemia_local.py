@@ -5,8 +5,6 @@ import re
 import time
 import tqdm
 import methods
-from groq import Groq
-from openai import OpenAI
 import transformers
 import torch
 from modelscope import snapshot_download
@@ -218,17 +216,17 @@ def run(model_name, mode, ds_path, output_fields, output_path, check_prompt, sav
     dataset = ds_path.split("/")[-1].replace(".csv", "")
     mode_path = output_path.split("/")[-1].replace(".csv", "")
 
-    if model_name == "llama-3.1-8b-instruct":
+    if model_name == "llama-3.1-8b":
         model_id = snapshot_download("LLM-Research/Meta-Llama-3.1-8B-Instruct",
                                      local_dir="../models/llama-3.1-8b-instruct")
-    if model_name == "llama-3.1-70b-instruct":
+    if model_name == "llama-3.1-70b":
         model_id = snapshot_download("LLM-Research/Meta-Llama-3.1-70B-Instruct",
                                      local_dir="../models/llama-3.1-70b-instruct")
-    if model_name == "gemma-2-2b-it":
+    if model_name == "gemma-2-2b":
         model_id = snapshot_download("LLM-Research/gemma-2-2B-it", local_dir="../models/gemma-2-2b-it")
-    if model_name == "gemma-2-9b-it":
+    if model_name == "gemma-2-9b":
         model_id = snapshot_download("LLM-Research/gemma-2-9B-it", local_dir="../models/gemma-2-9b-it")
-    if model_name == "gemma-2-27b-it":
+    if model_name == "gemma-2-27b":
         model_id = snapshot_download("LLM-Research/gemma-2-27B-it", local_dir="../models/gemma-2-27b-it")
 
     tokenizer = transformers.AutoTokenizer.from_pretrained(model_id)
@@ -304,7 +302,7 @@ def run(model_name, mode, ds_path, output_fields, output_path, check_prompt, sav
 
 
 def prompt_dataset(item, mode, ds_path):
-    if "boolq" in ds_path:
+    if "bool" in ds_path:
         return prompt_boolq(item, mode)
     if "gsm8k" in ds_path:
         return prompt_gsm8k(item, mode)
@@ -318,7 +316,7 @@ def prompt_dataset(item, mode, ds_path):
 
 def run_experiment(mode, dataset, model_name):
     check_prompt = False
-    save_emb = False
+    save_emb = True
     output_path = "./output"
     if "boolq" in dataset:
         output_fields = ["answer", "reason"]
